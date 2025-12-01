@@ -1,0 +1,233 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="app-layout">
+  <!-- Sidebar filters - visual only for now -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h3>Filters</h3>
+    </div>
+
+    <div class="sidebar-section">
+    <h4>Genres</h4>
+
+    <!-- Genre filter form: sends current query + chosen genre -->
+    <form method="POST" class="genre-form">
+        <input type="hidden" name="movie_name" value="{{ query or '' }}">
+
+        <div class="chip-list">
+            <button
+                type="submit"
+                name="genre"
+                value=""
+                class="chip {% if not genre %}chip-active{% endif %}"
+            >
+                All
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="action"
+                class="chip {% if genre|lower == 'action' %}chip-active{% endif %}"
+            >
+                Action
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="sci-fi"
+                class="chip {% if genre|lower == 'sci-fi' or genre|lower == 'scifi' %}chip-active{% endif %}"
+            >
+                Sci-Fi
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="comedy"
+                class="chip {% if genre|lower == 'comedy' %}chip-active{% endif %}"
+            >
+                Comedy
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="drama"
+                class="chip {% if genre|lower == 'drama' %}chip-active{% endif %}"
+            >
+                Drama
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="thriller"
+                class="chip {% if genre|lower == 'thriller' %}chip-active{% endif %}"
+            >
+                Thriller
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="animation"
+                class="chip {% if genre|lower == 'animation' %}chip-active{% endif %}"
+            >
+                Animation
+            </button>
+
+            <button
+                type="submit"
+                name="genre"
+                value="fantasy"
+                class="chip {% if genre|lower == 'fantasy' %}chip-active{% endif %}"
+            >
+                Fantasy
+            </button>
+        </div>
+    </form>
+</div>
+
+  </aside>
+
+  <!-- Main content -->
+  <section class="main">
+    {% if not movies %}
+    <!-- Landing hero banner -->
+    <section class="hero-landing section">
+        <div class="hero-landing-left">
+            <p class="hero-pill">Smart movie discovery</p>
+            <h1 class="hero-landing-title">
+                Find your next <span class="accent">favorite</span> movie.
+            </h1>
+            <p class="hero-landing-subtitle">
+                Use the search bar above to start with any movie you like and
+                see similar titles with live posters. Built to feel like a modern
+                streaming home screen.
+            </p>
+
+            <div class="hero-badges">
+                <span class="hero-badge">Content based engine</span>
+                <span class="hero-badge">Posters from TMDb</span>
+                <span class="hero-badge">Fast, lightweight UI</span>
+            </div>
+        </div>
+
+        <div class="hero-landing-right">
+            <div class="hero-banner-card">
+                <div class="hero-banner-tag">Trending now</div>
+                <div class="hero-banner-poster"></div>
+                <div class="hero-banner-meta">
+                    <h2>Action Hit</h2>
+                    <p>Popular with fans of sci fi and thriller.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fake trending strip so page never feels empty -->
+    <section class="section section-fake-trending">
+        <div class="section-header">
+            <h2>Trending on Movielens</h2>
+            <p>Preview of how recommendations will look once you search.</p>
+        </div>
+
+        <div class="strip fake-strip">
+            {% for i in range(7) %}
+                <article class="strip-card fake-card">
+                    <div class="poster-sm fake-poster"></div>
+                    <div class="strip-info">
+                        <h3>Sample movie {{ i + 1 }}</h3>
+                        <div class="stars">★★★★★</div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% else %}
+
+    <!-- Trending section - first few movies as big cards -->
+    <section class="section trending">
+      <div class="section-header">
+        <h2>Trending now</h2>
+        <p>
+          Based on your search
+          <span class="accent">{{ query }}</span>.
+        </p>
+      </div>
+
+      <div class="trending-row">
+        {% for m in movies[:4] %}
+        <form method="POST" class="card-form">
+          <!-- send the clicked movie as new query and keep current genre -->
+          <input type="hidden" name="movie_name" value="{{ m.title }}" />
+          <input type="hidden" name="genre" value="{{ genre or '' }}" />
+
+          <button type="submit" class="trending-card card-click">
+            {% if m.poster %}
+            <img
+              class="poster-lg lazy-img"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              data-src="{{ m.poster }}"
+              alt="{{ m.title }}"
+              loading="lazy"
+            />
+            {% else %}
+            <div class="no-poster large">No poster</div>
+            {% endif %}
+
+            <div class="trending-meta">
+              <h3>{{ m.title }}</h3>
+              <span class="primary-pill"> More like this </span>
+            </div>
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Recommended strip - horizontal scroll of smaller cards -->
+    <section class="section recommended">
+      <div class="section-header">
+        <h2>Recommended for you</h2>
+        <p>
+          More titles similar to
+          <span class="accent">{{ query }}</span>.
+        </p>
+      </div>
+
+      <div class="strip">
+        {% for m in movies %}
+        <form method="POST" class="card-form">
+          <input type="hidden" name="movie_name" value="{{ m.title }}" />
+          <input type="hidden" name="genre" value="{{ genre or '' }}" />
+
+          <button type="submit" class="strip-card card-click">
+            {% if m.poster %}
+            <img
+              class="poster-sm lazy-img"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              data-src="{{ m.poster }}"
+              alt="{{ m.title }}"
+              loading="lazy"
+            />
+            {% else %}
+            <div class="no-poster small">No poster</div>
+            {% endif %}
+
+            <div class="strip-info">
+              <h3>{{ m.title }}</h3>
+              <div class="stars">★★★★☆</div>
+            </div>
+          </button>
+        </form>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+  </section>
+</div>
+
+{% endblock %}

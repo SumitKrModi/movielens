@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Movielens - Movie Recommender</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+        defer
+    ></script>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="topbar-left">
+        <a href="{{url_for('home')}}" class="home-link"><div class="brand-mark">M</div></a>
+        <span class="brand-name">MOVIELENS</span>
+    </div>
+
+    <form method="POST" class="topbar-search">
+    <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input
+            type="text"
+            name="movie_name"
+            placeholder="Search for movies..."
+            value="{{ query or '' }}"
+            list="movie-titles"
+            autocomplete="off"
+        >
+        <datalist id="movie-titles">
+            {% for t in titles %}
+                <option value="{{ t }}"></option>
+            {% endfor %}
+        </datalist>
+    </div>
+
+    <!-- when searching from topbar, we do not send genre (it resets) -->
+    <button type="submit" class="search-btn">Search</button>
+</form>
+
+
+<datalist id="movie-titles">
+    {% if titles %}
+        {% for t in titles %}
+            <option value="{{ t }}"></option>
+        {% endfor %}
+    {% endif %}
+</datalist>
+
+        </div>
+    </form>
+</header>
+
+<main class="shell">
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>
