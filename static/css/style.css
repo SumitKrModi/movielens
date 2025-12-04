@@ -331,6 +331,9 @@ body {
     margin-top: 0.5rem;
 }
 
+.fake-strip::-webkit-scrollbar{
+  display: none;
+}
 
 .fake-strip .fake-card {
     opacity: 0.9;
