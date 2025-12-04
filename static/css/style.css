@@ -68,7 +68,7 @@ body {
 
 .brand-name {
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 
 .home-link{
@@ -331,8 +331,10 @@ body {
     margin-top: 0.5rem;
 }
 
+
 .fake-strip .fake-card {
     opacity: 0.9;
+    height: 100px;
 }
 
 .fake-poster {
