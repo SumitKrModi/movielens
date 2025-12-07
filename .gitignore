@@ -16,3 +16,6 @@ env/
 
 # Cache
 *.cache
+
+# one-time scripts
+fetch_posters_to_csv.py

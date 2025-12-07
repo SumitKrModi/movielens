@@ -6,6 +6,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Expected columns now: id, title, tags, poster_url (and maybe poster_path)
 movies = pd.read_csv("refined_with_posters.csv")
 
+def get_poster(id):
+    return movies.loc[movies.id == id, "poster_url"].values[0]
 
 # Precompute title -> tags map for fast lookup
 title_to_tags = dict(
